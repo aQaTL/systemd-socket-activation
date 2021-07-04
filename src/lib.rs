@@ -11,7 +11,7 @@ const SD_LISTEN_FDS_FUNC_NAME: &[u8] = b"sd_listen_fds";
 #[derive(Debug)]
 pub enum Error {
 	LibLoading(libloading::Error),
-	LibLoadingFailedToLoadSystemd,
+	LibLoadingFailedToLoadSystemd(String),
 	Systemd(std::io::Error),
 }
 
@@ -24,7 +24,9 @@ impl From<libloading::Error> for Error {
 pub fn systemd_socket_activation() -> Result<Vec<TcpListener>, Error> {
 	let nfds = unsafe {
 		let systemd_lib = libloading::Library::new("libsystemd.so").map_err(|err| match err {
-			libloading::Error::DlOpen { .. } => Error::LibLoadingFailedToLoadSystemd,
+			dlopen_err @ libloading::Error::DlOpen { .. } => {
+				Error::LibLoadingFailedToLoadSystemd(dlopen_err.to_string())
+			}
 			e => LibLoading(e),
 		})?;
 
