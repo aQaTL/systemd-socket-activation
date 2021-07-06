@@ -23,7 +23,7 @@ impl From<libloading::Error> for Error {
 
 pub fn systemd_socket_activation() -> Result<Vec<TcpListener>, Error> {
 	let nfds = unsafe {
-		let systemd_lib = libloading::Library::new("libsystemd.so").map_err(|err| match err {
+		let systemd_lib = libloading::Library::new("libsystemd.so.0").map_err(|err| match err {
 			dlopen_err @ libloading::Error::DlOpen { .. } => {
 				Error::LibLoadingFailedToLoadSystemd(dlopen_err.to_string())
 			}
