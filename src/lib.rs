@@ -6,7 +6,7 @@ const SD_LISTEN_FDS_START: i32 = 3;
 
 type SdListenFdsFunc = unsafe extern "C" fn(unset_environment: i32) -> i32;
 
-const SD_LISTEN_FDS_FUNC_NAME: &[u8] = b"sd_listen_fds";
+const SD_LISTEN_FDS_FUNC_NAME: &[u8] = b"sd_listen_fds\0";
 
 #[derive(Debug)]
 pub enum Error {
