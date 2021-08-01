@@ -6,5 +6,10 @@ license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = []
+dlopen = ["libloading"]
+dynlink = []
+
 [dependencies]
-libloading = "0.7.0"
+libloading = { version = "0.7.0", optional = true }
