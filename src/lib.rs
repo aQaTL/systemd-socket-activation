@@ -1,6 +1,5 @@
 #![cfg(unix)]
 
-use libloading::os;
 use std::net::TcpListener;
 
 #[allow(dead_code)]
@@ -22,7 +21,7 @@ impl From<libloading::Error> for Error {
 	}
 }
 
-#[cfg(not(any(feature = "dlopen", feature = "dynlink")))]
+#[cfg(not(any(feature = "dlopen", feature = "dynlink", feature = "env-var")))]
 pub fn systemd_socket_activation() -> Result<Vec<TcpListener>, Error> {
 	unimplemented!(
 		"Enable either \"dlopen\" or \"dynlink\" or \"env-var\" feature to use this crate"
@@ -89,8 +88,8 @@ pub fn systemd_socket_activation() -> Result<Vec<TcpListener>, Error> {
 	use std::os::unix::prelude::FromRawFd;
 
 	let nfds = std::env::var("LISTEN_FDS")
-		.unwrap_or_else(|| String::from("0"))
-		.parse::<u64>()
+		.unwrap_or_else(|_| String::from("0"))
+		.parse::<i32>()
 		.unwrap_or(0);
 
 	let listeners: Vec<TcpListener> = (SD_LISTEN_FDS_START..(SD_LISTEN_FDS_START + nfds))
